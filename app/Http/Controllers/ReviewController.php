@@ -6,6 +6,9 @@ use App\Http\Resources\ReviewResource;
 use App\Model\Product;
 use App\Model\Review;
 use Illuminate\Http\Request;
+use App\Http\Requests\ReviewRequest;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class ReviewController extends Controller
 {
@@ -19,15 +22,7 @@ class ReviewController extends Controller
         return ReviewResource::collection($product::find($id)->reviews);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -35,9 +30,15 @@ class ReviewController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ReviewRequest $request,Product $product,$id)
     {
-        //
+        
+        $product = Product::find($id);
+        $review = new Review($request->all());
+        $product->reviews()->save($review);
+        return response([
+            'data' => new ReviewResource($review)
+        ],Response::HTTP_CREATED);
     }
 
     /**
@@ -51,16 +52,7 @@ class ReviewController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Model\Review  $review
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Review $review)
-    {
-        //
-    }
+    
 
     /**
      * Update the specified resource in storage.
